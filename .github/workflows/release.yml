@@ -1,0 +1,43 @@
+# Push a tag matching plugin.json's version (e.g. v1.0.0) to publish a GitHub Release
+# with dist/aggAnalytics.zip attached. dist/ itself is never committed.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check tag matches plugin.json version
+        run: |
+          version="$(node -p "require('./plugin.json').version")"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match plugin.json version $version" >&2
+            exit 1
+          fi
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          awk -v v="${GITHUB_REF_NAME#v}" '
+            /^## \[/ { if (found) exit; found = index($0, "[" v "]") > 0; next }
+            found
+          ' CHANGELOG.md > notes.md
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/aggAnalytics.zip --title "$GITHUB_REF_NAME" --notes-file notes.md
