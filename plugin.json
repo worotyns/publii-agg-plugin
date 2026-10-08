@@ -1,7 +1,7 @@
 {
   "name": "agg Analytics",
   "author": "Mateusz Worotyński <worotyns@icloud.com>",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Cookieless, self-hosted analytics and insights with agg: page views, visitors, top pages, referrers and most read articles. Paste your agg host and pk_ site key.",
   "license": "MIT",
   "scope": "site",
