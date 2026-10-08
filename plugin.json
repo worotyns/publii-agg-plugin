@@ -1,0 +1,115 @@
+{
+  "name": "agg Analytics",
+  "author": "Mateusz Worotyński <worotyns@icloud.com>",
+  "version": "1.0.0",
+  "description": "Cookieless, self-hosted analytics and insights with agg: page views, visitors, top pages, referrers and most read articles. Paste your agg host and pk_ site key.",
+  "license": "MIT",
+  "scope": "site",
+  "minimumPubliiVersion": "0.46.0",
+  "usePluginSettingsView": false,
+  "messageInOptions": {
+    "type": "info",
+    "text": "Create a site in your agg server (Website analytics or Blog / publisher preset), then paste the server address and the site key (<code>pk_…</code>) from <strong>Settings → Install</strong>. Nothing is sent in Preview Mode unless you enable it below."
+  },
+  "config": [
+    {
+      "name": "host",
+      "label": "agg server address",
+      "note": "Where your agg server runs, e.g. <code>https://agg.example.com</code>. <code>https://</code> is added when missing.",
+      "group": "Connection",
+      "placeholder": "https://agg.example.com",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "siteKey",
+      "label": "Site key",
+      "note": "The public site key, starting with <code>pk_</code>. It is safe to publish: it only allows sending events.",
+      "group": "Connection",
+      "placeholder": "pk_…",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "trackArticles",
+      "label": "Track article reads",
+      "note": "Sends <code>article_read</code> with <code>{ article, title, section, author }</code> on post pages once the reader scrolled far enough or stayed long enough. Feeds the <em>Most read articles</em> and <em>Readers per section</em> aggregates of the Blog / publisher preset. The section is the post's main tag. Your theme must output the footer custom code (all official themes do).",
+      "group": "Events",
+      "type": "checkbox",
+      "value": true
+    },
+    {
+      "name": "readSeconds",
+      "label": "Read after (seconds on the page)",
+      "note": "Counted only while the tab is visible. 0 disables the time rule.",
+      "group": "Events",
+      "type": "range",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "value": 30,
+      "dependencies": [
+        {
+          "field": "trackArticles",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "readScroll",
+      "label": "Read after scrolling (% of the page)",
+      "note": "Whichever rule is met first counts the read. 0 disables the scroll rule.",
+      "group": "Events",
+      "type": "range",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "value": 60,
+      "dependencies": [
+        {
+          "field": "trackArticles",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "trackOutbound",
+      "label": "Track outbound link clicks",
+      "note": "Sends <code>outbound_click</code> with <code>{ host, url }</code> when a visitor follows a link to another site. Add an aggregate grouped by <code>props.host</code> to see where readers go.",
+      "group": "Events",
+      "type": "checkbox",
+      "value": false
+    },
+    {
+      "name": "previewMode",
+      "label": "Send events in Preview Mode",
+      "note": "Only for checking the setup: previews would otherwise count as real visits.",
+      "group": "Events",
+      "type": "checkbox",
+      "value": false
+    },
+    {
+      "name": "cookieBannerIntegration",
+      "label": "Wait for consent from the Publii Cookie Banner",
+      "note": "agg sets no cookies and stores only a random visitor id in localStorage, so many sites do not need consent for it. Enable this to load agg only after the visitor accepts the cookie group below.",
+      "group": "Cookie Banner",
+      "type": "checkbox",
+      "value": false
+    },
+    {
+      "name": "cookieBannerGroup",
+      "label": "Cookie Group ID",
+      "note": "The Cookie Group ID from Site Settings → Privacy (GDPR), e.g. <code>analytics</code>. See the <a href='https://getpublii.com/docs/gdpr-cookie-banner-configuration.html#cookie-groups' target='_blank' rel='nofollow noopener noreferrer'>Publii documentation</a>.",
+      "group": "Cookie Banner",
+      "placeholder": "analytics",
+      "type": "text",
+      "value": "analytics",
+      "dependencies": [
+        {
+          "field": "cookieBannerIntegration",
+          "value": true
+        }
+      ]
+    }
+  ]
+}
